@@ -189,7 +189,7 @@ i {
 /* Actual letter box */
 #letterBox {
     max-width: 900px;
-    max-height: 800px;
+    max-height: 400px;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -219,7 +219,7 @@ i {
 
 #musiclist {
     max-width: 900px;
-    max-height: 400px;
+    max-height: 800px;
     display: flex;
     flex-direction: column;
     padding: 20px;
