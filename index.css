@@ -4,8 +4,20 @@
     --bg-light:   hsl(0,0%,25%);
     --text:       hsl(0,0%,95%);
     --text-muted: hsl(0,0%,70%);
-    --icon:         hsl(0,0%,100%)
+    --icon:       hsl(0,0%,100%);
+    --border:     #333;
 }
+
+:root asdad{
+    --bg-dark:    hsl(0,0%,10%);
+    --bg:         hsl(0,0%,15%);
+    --bg-light:   hsl(0,0%,25%);
+    --text:       hsl(0,0%,95%);
+    --text-muted: hsl(0,0%,70%);
+    --icon:       hsl(0,0%,100%);
+    --border:     #333;
+}
+
 
     /* 
     hsla(0,0%,100%,.9) - with transperancy
@@ -24,12 +36,14 @@ body {
     align-items: center;
     margin: 0%;
     padding: 0%;
+    color: white;
+    overflow: hidden;
 }
 
 /* Music Player */
 .site-header {
     display: flex;
-    position: sticky;
+    position: fixed;
     justify-content: center;
     top: 0px;
     background: var(--bg);
@@ -63,6 +77,7 @@ body {
     border: none;
     padding: 0.8rem;
     border-radius: 100%;
+    cursor: pointer;
 }
 
 .btn-player:hover {
@@ -79,8 +94,154 @@ i {
 }
 
 
-/* Something else */
+/* Drawing Controlls */
+#controlPanel {
+    position: fixed;
+    top: 10%;
+    left: 2%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 2px solid #333;
+    border-radius: 140px;
+    max-width: 600px;
+    z-index: 9999;
+    cursor: default;
+    user-select: none;
+}
+
+#dragHandle {
+    padding: 15px;
+    font-size: 1.1rem;
+    cursor: grab;
+    position: relative;
+    top: 100;
+    left: 15px; 
+}
+
+#dragHandle.dragging {
+    cursor: grabbing;
+    background: #ddd;
+}
+
+.btw-draw {
+    padding: 8px 8px;
+    border: 1px solid var(--border);
+    border-radius: 100%;
+    background: var(--bg);
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.btw-draw:hover {
+    background-color: var(--bg-light);
+}
+
+/* Main Box */
+#contentBox {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    background-color: var(--bg);
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid white;
+
+}
+
+.content-inner {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-cont {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 100%;
+    background: var(--bg);
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.icon-cont {
+    font-size: 4rem;
+}
+
+.btn-cont:hover {
+    background-color: var(--bg-light);
+}
+
+#letterOverlay {
+    display: none; 
+    position: absolute;
+    background: var(--bg);
+    z-index: 4;
+    top: 20%;
+}
+
+/* Actual letter box */
+#letterBox {
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 2px solid black;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+/* Close button */
+#closeLetterBtn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
 
 
+#musicOverlay {
+    display: none; 
+    position: absolute;
+    background: var(--bg);
+    z-index: 4;
+    top: 20%;
+}
 
+#musiclist {
+    max-width: 900px;
+    max-height: 800px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 2px solid black;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: scroll;
+}
 
+#closemusic {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+/* Music cards */
+
+.card {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+img {
+    max-width: 300px;
+    max-height: 300px;
+}

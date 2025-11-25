@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<style>
+#controlPanel {
+  position: fixed;      /* Float above canvas */
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.9);
+  border: 2px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  max-width: 600px;     /* Prevent full width */
+  z-index: 9999;        /* Above everything */
+  cursor: default;
+  user-select: none;     /* Prevent text selection while dragging */
+}
+
+#dragHandle {
+  cursor: grab;
+  padding: 4px 8px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #eee;
+  margin-right: 10px;
+}
+
+#dragHandle.dragging {
+  cursor: grabbing;
+  background: #ddd;
+}
+
+</style>
+</head>
+<body>
+<canvas id="drawCanvas"></canvas>
+
+<div id="controlPanel">
+  <div id="dragHandle">🎨 Drag</div>
+
+  <button id="currentColor">Color</button>
+  <input type="color" id="colorPicker" value="#000000" style="display:none;">
+
+  <label>Line Width:</label>
+  <select id="lineWidthSelect">
+    <option value="2">Thin</option>
+    <option value="5">Medium</option>
+    <option value="10">Thick</option>
+  </select>
+
+  <button id="eraserBtn">Eraser</button>
+  <button id="clearBtn">Clear</button>
+  <button id="gridToggle">Grid</button>
+</div>
+
+<script>
+// Canvas setup
+const canvas = document.getElementById("drawCanvas");
+const ctx = canvas.getContext("2d");
+
+// Controls
+const currentColorBtn = document.getElementById("currentColor");
+const colorPicker = document.getElementById("colorPicker");
+const lineWidthSelect = document.getElementById("lineWidthSelect");
+const eraserBtn = document.getElementById("eraserBtn");
+const clearBtn = document.getElementById("clearBtn");
+const gridToggle = document.getElementById("gridToggle");
+const controlPanel = document.getElementById("controlPanel");
+const dragHandle = document.getElementById("dragHandle");
+
+// Full-screen canvas
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Drawing state
+let drawing = false;
+let currentColor = "#000000";
+let lineWidth = 2;
+let isEraser = false;
+let showGrid = false;
+
+ctx.strokeStyle = currentColor;
+ctx.lineWidth = lineWidth;
+ctx.lineCap = "round";
+
+// --- DRAWING EVENTS ---
+canvas.addEventListener("mousedown", (e) => {
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(e.clientX, e.clientY);
+});
+window.addEventListener("mouseup", () => (drawing = false));
+canvas.addEventListener("mousemove", (e) => {
+  if (!drawing) return;
+  ctx.lineTo(e.clientX, e.clientY);
+  ctx.stroke();
+});
+
+// --- COLOR PICKER ---
+currentColorBtn.addEventListener("click", () => {
+  colorPicker.click();
+});
+
+colorPicker.addEventListener("input", (e) => {
+  currentColor = e.target.value;
+  ctx.strokeStyle = currentColor;
+  isEraser = false;
+  updateButtonStates();
+  currentColorBtn.style.background = currentColor;
+});
+
+// --- LINE WIDTH DROPDOWN ---
+lineWidthSelect.addEventListener("change", (e) => {
+  lineWidth = parseInt(e.target.value);
+  ctx.lineWidth = lineWidth;
+});
+
+// --- ERASER ---
+eraserBtn.addEventListener("click", () => {
+  isEraser = true;
+  ctx.strokeStyle = "#ffffff"; // eraser uses background color
+  ctx.lineWidth = lineWidth;
+  updateButtonStates();
+});
+
+// --- CLEAR CANVAS ---
+clearBtn.addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (showGrid) drawGrid();
+});
+
+// --- BUTTON STATE HIGHLIGHT ---
+function updateButtonStates() {
+  if (isEraser) {
+    eraserBtn.style.border = "2px solid black";
+    currentColorBtn.style.border = "none";
+  } else {
+    eraserBtn.style.border = "none";
+    currentColorBtn.style.border = "2px solid black";
+  }
+}
+updateButtonStates();
+
+// --- DRAGGING TOOLBAR ---
+let offsetX, offsetY, isDragging = false;
+
+dragHandle.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  offsetX = e.clientX - controlPanel.offsetLeft;
+  offsetY = e.clientY - controlPanel.offsetTop;
+  dragHandle.classList.add("dragging");
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+  dragHandle.classList.remove("dragging");
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  let newX = e.clientX - offsetX;
+  let newY = e.clientY - offsetY;
+
+  // constrain inside viewport
+  const maxX = window.innerWidth - controlPanel.offsetWidth;
+  const maxY = window.innerHeight - controlPanel.offsetHeight;
+  newX = Math.max(0, Math.min(newX, maxX));
+  newY = Math.max(0, Math.min(newY, maxY));
+
+  controlPanel.style.left = newX + "px";
+  controlPanel.style.top = newY + "px";
+});
+
+// --- GRID TOGGLE ---
+gridToggle.addEventListener("click", () => {
+  showGrid = !showGrid;
+  if (showGrid) drawGrid();
+  else ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+// Draw grid under drawings
+function drawGrid() {
+  const step = 50;
+  ctx.save();
+  ctx.strokeStyle = "#ccc";
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < canvas.width; x += step) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += step) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+</script>
+
+</body>
+</html>
