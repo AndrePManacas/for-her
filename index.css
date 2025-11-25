@@ -1,0 +1,86 @@
+:root {
+    --bg-dark:    hsl(0,0%,10%);
+    --bg:         hsl(0,0%,15%);
+    --bg-light:   hsl(0,0%,25%);
+    --text:       hsl(0,0%,95%);
+    --text-muted: hsl(0,0%,70%);
+    --icon:         hsl(0,0%,100%)
+}
+
+    /* 
+    hsla(0,0%,100%,.9) - with transperancy
+    hsl(0,0%,100%);    - without transperancy
+    */
+
+html {
+    margin: 0%;
+    padding: 0%;
+}
+
+body {
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0%;
+    padding: 0%;
+}
+
+/* Music Player */
+.site-header {
+    display: flex;
+    position: sticky;
+    justify-content: center;
+    top: 0px;
+    background: var(--bg);
+    width: 100%;
+}
+
+.inner-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 1280px;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+}
+
+.progress-container {
+    gap: 1rem;
+}
+
+.progress-bar {
+    display: flex;
+}
+
+.btn-player {
+    background-color: var(--bg);
+    border: none;
+    padding: 0.8rem;
+    border-radius: 100%;
+}
+
+.btn-player:hover {
+    background-color: var(--bg-light);
+}
+
+.btn-loop.active {
+    background-color: var(--bg-light); /* stays active */
+}
+
+i {
+    font-size: 1.1rem;
+    color: var(--icon);
+}
+
+
+/* Something else */
+
+
+
+
